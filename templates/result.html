@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Weather Now</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/result.css') }}">
+</head>
+<body class="body">
+  <div style="overflow:scroll;">
+    <main>
+    	<div class="container">
+    		<h1>Weather Now</h1>
+    		<div class="search-box">
+    			<div class="search-icon"><i class="fa fa-search search-icon"></i></div>
+    			<form method = "get" action="/search" class="search-form">
+    				<input type="text" placeholder="지역을 입력하세요" id="search" autocomplete="off" name = "query">
+    			</form>
+    			<svg class="search-border" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/" x="0px" y="0px" viewBox="0 0 671 111" style="enable-background:new 0 0 671 111;"
+    			 xml:space="preserve">
+              <path class="border" d="M335.5,108.5h-280c-29.3,0-53-23.7-53-53v0c0-29.3,23.7-53,53-53h280"/>
+              <path class="border" d="M335.5,108.5h280c29.3,0,53-23.7,53-53v0c0-29.3-23.7-53-53-53h-280"/>
+            </svg>
+    			<div class="go-icon"><i class="fa fa-arrow-right"></i></div>
+    		</div>
+        </div>
+        <div class="title" style="outline: rgb(255,0,0) none; font-size: 1em">
+          <span class="name" style="padding: 0 10 0 10;">🚩 {{location}}</span>
+        </div>
+
+
+
+        <div id="outer" style="outline: rgb(0,0,255) none 1px;">
+          <div id='result-container' style="outline: rgb(255,0,0) none 1px;">
+
+            <div class="other-container" style="outline: rgba(0,255,0) none 1px;">
+              <strong>
+                <span class="temp" style="outline: rgba(255,0,0) none 1px;">{{temp}}</span>
+                <span class="celsius" style="outline: rgba(0,0,255) none 1px;">°</span>
+                <span class="weather" style="outline: rgb(255,255,0) none 1px;">{{weather}}</span>
+                <span class="just-line" style="outline: rgba(255,0,0) none 1px;">|</span>
+                <span class="compare" style="outline: rgba(255,0,0) none 1px;">어제보다 {{compare}}</span>
+                <span class="feel_temp" style="outline: rgba(255,0,0) none 1px;">체감온도 {{feel_temp}}</span>
+              </strong>       
+            </div>
+
+
+
+            <div class="time" style="outline: rgb(0,255,0) none 1px;">
+              <span id="time">{{time}}</span>
+            </div>
+
+            <div class="refresh-button-frame">
+              <button class="refresh-button" onclick="refresh()"><img src="/static/image/refresh.png" alt="um"></button>
+            </div>
+
+            <div class="weather_icon_frame" style="outline: rgba(255,0,0) none 1px;">
+              <img class="weather_icon" src="https://ssl.pstatic.net/sstatic/keypage/outside/scui/weather_new_new/img/weather_svg_v2/icon_flat_wt1.svg">
+            </div>
+
+            <div class="box1" style="outline: rgba(0,255,0) none 1px;">
+              <div class="dust-text" style="outline: rgba(0,255,0) none 1px;">
+                <span>미세먼지</span>
+              </div>
+              <div class="dust-state">
+                {% if dust == '좋음' %}
+                  <span style="color:#32A1FF">{{dust}}</span>
+                {% elif dust == '보통' %}
+                  <span style="color:#00C73C">{{dust}}</span>
+                {% elif dust == '나쁨' %}
+                  <span style="color:#FD9B5A">{{dust}}</span>
+                {% elif dust == '매우나쁨' %}
+                  <span style="color:#FF5959">{{dust}}</span>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="box2" style="outline: rgba(0,255,0) none 1px;">
+              <div class="ult-dust-text" style="outline: rgba(0,255,0) none 1px;">
+                <span>초미세먼지</span>
+              </div>
+              <div class="ult-dust-state">
+                {% if ult_dust == '좋음' %}
+                  <span style="color:#32A1FF">{{ult_dust}}</span>
+                {% elif ult_dust == '보통' %}
+                  <span style="color:#00C73C">{{ult_dust}}</span>
+                {% elif ult_dust == '나쁨' %}
+                  <span style="color:#FD9B5A">{{ult_dust}}</span>
+                {% elif ult_dust == '매우나쁨' %}
+                  <span style="color:#FF5959">{{ult_dust}}</span>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="box3" style="outline: rgba(0,255,0) none 1px;">
+              <div class="uv-text" style="outline: rgba(0,255,0) none 1px;">
+                <span>자외선</span>
+              </div>
+              <div class="uv-state">
+                {% if uv == '좋음' %}
+                  <span style="color:#413edb">{{uv}}</span>
+                {% elif uv == '보통' %}
+                  <span style="color:#00C73C">{{uv}}</span>
+                {% elif uv == '나쁨' %}
+                  <span style="color:#FD9B5A">{{uv}}</span>
+                {% elif uv == '매우나쁨' %}
+                  <span style="color:#FF5959">{{uv}}</span>
+                {% endif %}
+              </div>
+            </div>
+          
+          
+          
+          </div>
+        </div>
+        
+        
+        <div class="graph_container" style="outline: rgba(0,255,0) none 1px;" >
+          {{ content | safe }}  
+        </div>
+          
+          
+      
+    </main>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    function refresh(){  
+          $("#result-container").load(window.location.href + " #result-container");
+    }
+  </script>
+</body>
+</html>
